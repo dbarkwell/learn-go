@@ -1,0 +1,21 @@
+version: '3.1'
+
+services:
+
+  db:
+    image: mysql
+    command: --default-authentication-plugin=caching_sha2_password
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    ports:
+      - "3306:3306"
+      - "33060:33060"
+    volumes:
+      - "./data/mysql:/var/lib/mysql:rw"
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - "3307:8080"

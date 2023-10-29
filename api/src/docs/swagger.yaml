@@ -1,0 +1,49 @@
+basePath: /api/v1
+definitions:
+  album.Album:
+    properties:
+      artist:
+        type: string
+      id:
+        type: integer
+      price:
+        type: number
+      title:
+        type: string
+    type: object
+externalDocs:
+  description: OpenAPI
+  url: https://swagger.io/resources/open-api/
+host: localhost:8080
+info:
+  contact: {}
+  description: Project to learn Go.
+  title: Learning Go
+  version: "1.0"
+paths:
+  /albums/{id}:
+    get:
+      consumes:
+      - application/json
+      description: get an album by ID
+      parameters:
+      - description: Album ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/album.Album'
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+      summary: Find an album
+      tags:
+      - album
+swagger: "2.0"
