@@ -25,6 +25,8 @@ func (ar *Repository) FindAll() ([]Album, error) {
 
 func (ar *Repository) FindByID(id int64) (Album, error) {
 	stmt, err := ar.DB.Preparex(`SELECT id, title, artist, price FROM album WHERE id = ?`)
+	defer stmt.Close()
+
 	if err != nil {
 		return Album{}, err
 	}
@@ -52,7 +54,6 @@ func (ar *Repository) Remove(id int64) (bool, error) {
 	delete := `DELETE FROM album WHERE id = ?`
 	result := ar.DB.MustExec(delete, id)
 	rows, err := result.RowsAffected()
-
 	if err != nil {
 		return false, err
 	}
