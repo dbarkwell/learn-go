@@ -11,12 +11,6 @@ import (
 	_ "learn-go.barkwell.com/docs"
 )
 
-type Requirement func(c *gin.Context) bool
-
-type Policy struct {
-	Requirements []Requirement
-}
-
 func initDB(dsn string) *sqlx.DB {
 	if dsn == "" {
 		panic("Missing MySQL connection string")
