@@ -1,46 +1,24 @@
-import React, {useEffect, useState} from "react";
-import "./App.css";
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
-
-interface Album {
-    id: number,
-    title: string
-}
+import React from 'react';
+import {
+    BrowserRouter,
+    Routes,
+    Route,
+} from "react-router-dom";
+import './App.css';
+import Albums from './pages/Albums';
+import Login from './pages/Login';
+import Register from "./pages/Register";
 
 function App() {
-  const [data, setData] = useState<Album[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  const renderAlbums = (data: Album[]) => {
-    return data.map(d => <div>d.Title</div>);
-  }
-
-  useEffect(() => {
-      (async () => {
-          const albumsResponse = await fetch("http://localhost:8080/api/v1/albums");
-          const { albums } = await albumsResponse.json();
-          setLoading(false);
-          setData(albums);
-      })();
-  }, []);
-
-  if (data === null) {
-      return <div></div>;
-  }
-
-  const columns: GridColDef[] = [
-      { field: "artist", headerName: "Artist", width: 300 },
-      { field: "title", headerName: "Title", width: 400 },
-      { field: "price", headerName: "Price", width: 75 },
-  ];
-
-  return (
-    <div className="App">
-        {loading && <p>Loading...</p>}
-        {!loading && <div style={{ height: 300, width: "100%" }}><DataGrid rows={data} columns={columns}/></div>}
-    </div>
-  );
+    return (
+        <BrowserRouter>
+            <Routes>
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
+                <Route path="/albums" element={<Albums />} />
+            </Routes>
+        </BrowserRouter>
+    );
 }
 
 export default App;

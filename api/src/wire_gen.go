@@ -9,17 +9,34 @@ package main
 import (
 	"github.com/jmoiron/sqlx"
 	"learn-go.barkwell.com/album"
+	"learn-go.barkwell.com/authentication"
+	"learn-go.barkwell.com/user"
 )
 
 import (
 	_ "github.com/go-sql-driver/mysql"
+	_ "learn-go.barkwell.com/docs"
 )
 
 // Injectors from wire.go:
 
 func initAlbumAPI(db *sqlx.DB) album.API {
-	albumRepository := album.ProvideAlbumRepository(db)
-	albumService := album.ProvideAlbumService(albumRepository)
-	albumAPI := album.ProvideAlbumAPI(albumService)
-	return albumAPI
+	repository := album.ProvideAlbumRepository(db)
+	service := album.ProvideAlbumService(repository)
+	api := album.ProvideAlbumAPI(service)
+	return api
+}
+
+func initUserAPI(db *sqlx.DB) user.API {
+	repository := user.ProvideUserRepository(db)
+	service := user.ProvideUserService(repository)
+	api := user.ProvideUserAPI(service)
+	return api
+}
+
+func initAuthenticationAPI(db *sqlx.DB) authentication.API {
+	repository := authentication.ProvideAuthenticationRepository(db)
+	service := authentication.ProvideAuthenticationService(repository)
+	api := authentication.ProvideAuthenticationAPI(service)
+	return api
 }

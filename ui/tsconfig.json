@@ -1,6 +1,9 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "target": "es6",
+    "types": [
+      "@types/webappsec-credential-management"
+    ],
     "lib": [
       "dom",
       "dom.iterable",
