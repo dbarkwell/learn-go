@@ -2,10 +2,11 @@ package authentication
 
 import (
 	"github.com/go-webauthn/webauthn/webauthn"
+	"github.com/google/uuid"
 )
 
 type LoginUser struct {
-	ID          []byte
+	ID          uuid.UUID
 	Name        string
 	DisplayName string
 	Credential  []webauthn.Credential
@@ -14,7 +15,7 @@ type LoginUser struct {
 var _ webauthn.User = (*LoginUser)(nil)
 
 func (user *LoginUser) WebAuthnID() []byte {
-	return user.ID
+	return user.ID[:]
 }
 
 func (user *LoginUser) WebAuthnName() string {

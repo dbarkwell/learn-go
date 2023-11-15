@@ -7,6 +7,7 @@
 package main
 
 import (
+	"github.com/bradfitz/gomemcache/memcache"
 	"github.com/jmoiron/sqlx"
 	"learn-go.barkwell.com/album"
 	"learn-go.barkwell.com/authentication"
@@ -27,16 +28,18 @@ func initAlbumAPI(db *sqlx.DB) album.API {
 	return api
 }
 
-func initUserAPI(db *sqlx.DB) user.API {
+func initUserAPI(db *sqlx.DB, memcache2 *memcache.Client) user.API {
 	repository := user.ProvideUserRepository(db)
-	service := user.ProvideUserService(repository)
+	service := user.ProvideUserService(repository, memcache2)
 	api := user.ProvideUserAPI(service)
 	return api
 }
 
-func initAuthenticationAPI(db *sqlx.DB) authentication.API {
+func initAuthenticationAPI(db *sqlx.DB, memcache2 *memcache.Client, ac authentication.AuthnConfig) authentication.API {
 	repository := authentication.ProvideAuthenticationRepository(db)
-	service := authentication.ProvideAuthenticationService(repository)
-	api := authentication.ProvideAuthenticationAPI(service)
+	userRepository := user.ProvideUserRepository(db)
+	service := user.ProvideUserService(userRepository, memcache2)
+	authenticationService := authentication.ProvideAuthenticationService(repository, service)
+	api := authentication.ProvideAuthenticationAPI(authenticationService, ac)
 	return api
 }

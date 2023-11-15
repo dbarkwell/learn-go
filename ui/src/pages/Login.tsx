@@ -1,8 +1,13 @@
 import {base64} from "../utils/base64";
+import React, {useState} from "react";
 
 function Login() {
-    async function signIn() {
-        const optionsResponse = await fetch("https://f84e-99-228-180-110.ngrok-free.app/api/v1/auth/signinRequest");
+    const [ message, setMessage ] = useState("");
+    async function login(event: React.FormEvent<EventTarget>) {
+        event.preventDefault();
+        const target = event.target as HTMLFormElement;
+        const username = (target.elements.namedItem("username") as HTMLInputElement).value;
+        const optionsResponse = await fetch(`/api/v1/auth/signinRequest/${username}`);
         const {publicKey} = await optionsResponse.json();
         publicKey.challenge = base64.decode(publicKey.challenge);
 
@@ -41,13 +46,20 @@ function Login() {
             "Content-Type": "application/json",
         };
 
-        await fetch("https://f84e-99-228-180-110.ngrok-free.app/api/v1/auth/signinResponse",
+        const signInResponse = await fetch(`/api/v1/auth/signinResponse/${username}`,
             {method: "POST", body: JSON.stringify(credential), credentials: "same-origin", headers: headers});
+        const { message } = await signInResponse.json();
+        setMessage(message);
     }
 
     return (
         <div className="Login">
-            <button onClick={signIn}>Sign In</button>
+            <form onSubmit={login}>
+                <div>Username</div>
+                <div><input type={"text"} name={"username"} /></div>
+                <button type={"submit"} value={"Login"}>Login</button>
+            </form>
+            <div>{message}</div>
         </div>
     );
 }

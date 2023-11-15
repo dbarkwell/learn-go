@@ -1,9 +1,19 @@
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import {base64} from "../utils/base64";
 
 function Register() {
-     async function registration() {
-        const optionsResponse = await fetch("https://f84e-99-228-180-110.ngrok-free.app/api/v1/auth/registerRequest");
+    const [ message, setMessage ] = useState("");
+    async function registration(event: React.FormEvent<EventTarget>) {
+        event.preventDefault();
+        const target = event.target as HTMLFormElement;
+        const username = (target.elements.namedItem("username") as HTMLInputElement).value;
+        const headers = {
+             "X-Requested-With": "XMLHttpRequest",
+             "Content-Type": "application/json",
+        };
+        const optionsResponse = await fetch(`/api/v1/auth/registerRequest/${username}`,
+            {method: "POST", credentials: "same-origin", headers: headers});
+
         const {publicKey} = await optionsResponse.json()
 
         // Base64URL decode some values
@@ -47,19 +57,23 @@ function Register() {
             }
         };
 
-        const headers = {
-            "X-Requested-With": "XMLHttpRequest",
-            "Content-Type": "application/json",
-        };
+
 
         // Send the result to the server and return the promise.
-        return await fetch("https://f84e-99-228-180-110.ngrok-free.app/api/v1/auth/registerResponse",
+        const registerResponse = await fetch(`/api/v1/auth/registerResponse/${username}`,
             {method: "POST", body: JSON.stringify(credential), credentials: "same-origin", headers: headers});
+        const { message } = await registerResponse.json();
+        setMessage(message);
     }
 
     return (
         <div className="Register">
-            <button onClick={registration}>Register</button>
+            <form onSubmit={registration}>
+                <div>Username</div>
+                <div><input type={"text"} name={"username"} /></div>
+                <button type={"submit"} value={"Register"}>Register</button>
+            </form>
+            <div>{message}</div>
         </div>
     );
 }
